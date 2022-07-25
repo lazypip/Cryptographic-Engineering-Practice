@@ -1,3 +1,6 @@
+"""
+TODO : ECC functions for utility.
+"""
 default_ecc_table = {
     'n': 'FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123',
     'p': 'FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF',
@@ -12,8 +15,7 @@ def legendre_symbol(a, p):
     return -1 if ls == p - 1 else ls
 
 def modular_sqrt(a, p):
-    # Simple cases
-    #
+    """TODO :"""
     if legendre_symbol(a, p) != 1:
         return 0
     elif a == 0:
@@ -23,18 +25,12 @@ def modular_sqrt(a, p):
     elif p % 4 == 3:
         return pow(a, (p + 1) // 4, p)
 
-    # Partition p-1 to s * 2^e for an odd s (i.e.
-    # reduce all the powers of 2 from p-1)
-    #
     s = p - 1
     e = 0
     while s % 2 == 0:
         s //= 2
         e += 1
 
-    # Find some 'n' with a legendre symbol n|p = -1.
-    # Shouldn't take long.
-    #
     n = 2
     while legendre_symbol(n, p) != -1:
         n += 1
@@ -72,67 +68,48 @@ def neg_point(P1):
     return x + y
 
 
-def ex_euc(j, k):
-    if j == k:
-        return (j, 1, 0)
-    else:
-        i = 0
-        j_array = [j]
-        k_array = [k]
-        q_array = []
-        r_array = []
-
-        prev_r_is_zero = False
-
-        while not (prev_r_is_zero):
-            q_array.append(k_array[i]//j_array[i])
-            r_array.append(k_array[i]%j_array[i])
-            k_array.append(j_array[i])
-            j_array.append(r_array[i])
-            i += 1
-            if r_array[i-1] == 0:
-                prev_r_is_zero = True
-        i -= 1
-        gcd = j_array[i]
-        x_array = [1]
-        y_array = [0]
-
-        i -= 1
-        total_steps = i
-
-        while i >= 0:
-            y_array.append(x_array[total_steps-i])
-            x_array.append(y_array[total_steps-i] - q_array[i]*x_array[total_steps-i])
-            i -= 1
-
-        return (gcd, x_array[-1], y_array[-1])
+def gcd(a,b):
+    """TODO : 欧几里得算法求最大公因子"""
+    if a < b:
+        a, b = b, a
+    while (b!=0):
+        a, b = b, a % b
+    return a
 
 
-def mod_inverse(j, n):
-    (gcd, x, y) = ex_euc(j, n)
+def ex_gcd(a,m):
+    """TODO : 应用扩展欧几里得 由于(a,m)=1时，有ax+bm=1，即ax = 1(mod m) x即为逆元"""
+    if gcd(a,m)==0:
+        print("Error")
+        return
+    a = a % m  # 减少运算量
+    
+    # 需要两个等式以构建下一个等式
+    n1, n2, n3 = 1, 0, a
+    n1_, n2_, n3_ = 0, 1, m
+    while n3_ != 0:
+        q = n3 // n3_   # 使等式右边为余数并递减
+        n1_, n2_, n3_, n1, n2, n3 = n1 -q * n1_, n2 - q * n2_, n3 - q * n3_, n1_, n2_, n3_
 
-    if gcd == 1:
-        return x%n
-    else:
-        return -1
+    return n1 % m   # 化为最小
 
 
-def ecc_add(p: str, q: str) -> str:
+def ecc_add(P1: str, P2: str) -> str:
     """
+    TODO : 实现ECC加法
     para : hex, ret : hex
     """
-    p = [int(p[:64], 16), int(p[64:], 16)]
-    q = [int(q[:64], 16), int(q[64:], 16)]
+    P1 = [int(P1[:64], 16), int(P1[64:], 16)]
+    P2 = [int(P2[:64], 16), int(P2[64:], 16)]
 
-    if p[0] > q[0]:
-        temp = p
-        p = q
-        q = temp
-    r = []
-    P = int(default_ecc_table['p'], 16)
-    slope = (q[1] - p[1])*mod_inverse(q[0] - p[0], P) % P
+    if P1[0] > P2[0]:
+        P1, P2 = P2, P1
 
-    r.append((slope**2 - p[0] - q[0]) % P)
-    r.append((slope*(p[0] - r[0]) - p[1]) % P)
+    res = [0, 0]
+    mod = int(default_ecc_table['p'], 16)
+    slope = (P2[1] - P1[1]) * ex_gcd(P2[0] - P1[0], mod) % mod
 
-    return hex(r[0])[2:].rjust(64, '0') + hex(r[1])[2:].rjust(64, '0')
+    res[0] = (pow(slope, 2) - P1[0] - P2[0]) % mod
+    res[1] = (slope * (P1[0] - res[0]) - P1[1]) % mod
+
+    return hex(res[0])[2:].rjust(64, '0') + hex(res[1])[2:].rjust(64, '0')
