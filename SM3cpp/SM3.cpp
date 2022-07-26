@@ -1,8 +1,3 @@
-/*¼ÆËãË÷Òı(ÄÃÒ»¸öÀı×Ó±ßĞ´±ßÍÆ½ø)£¬Ñ§Ï°ËûÈË´úÂë£¬¸üºÃµØµ÷ÊÔ
-×óÒÆÖ¸Ïò¸ßÎ»ÒÆ¶¯
-pyµÄint(16)
-*/
-
 #include <stdint.h>
 #include <iostream>
 #include <cmath>
@@ -34,7 +29,7 @@ SM3::~SM3() {
 }
 
 void SM3::init() {
-	// IV¸³Öµ
+	// IVèµ‹å€¼
 	input_pre = new block[HASH_LEN / BLOCK_LEN];
 	memcpy_s(input_pre, HASH_LEN, IV, HASH_LEN);
 }
@@ -63,7 +58,7 @@ void SM3::update() {
 	for (int j = 0; j < 64; j++)
 		WW[j] = W[j] ^ W[j + 4];
 
-	/* Ñ¹Ëõº¯Êı */
+	/* å‹ç¼©å‡½æ•° */
 	block A = input_pre[0], B = input_pre[1], C = input_pre[2], D = input_pre[3];
 	block E = input_pre[4], F = input_pre[5], G = input_pre[6], H = input_pre[7];
 	block SS1, SS2, TT1, TT2;
@@ -91,15 +86,15 @@ void SM3::update() {
 
 
 void SM3::final() {
-	/* ½øĞĞÌî³ä */
-	// ĞèÒª2¸öGROUP
+	/* è¿›è¡Œå¡«å…… */
+	// éœ€è¦2ä¸ªGROUP
 	if (msg_mod_len + 1 + 8 > GROUP_LEN) {
 		char* msg_end = new char[2 * GROUP_LEN];
 		memset(msg_end, 0x00, 2 * GROUP_LEN);
 		memcpy_s(msg_end, msg_mod_len, msg_ptr, msg_mod_len);
 
-		msg_end[msg_mod_len] = (uint8_t)0x80;  // Ìî³ä 1 byte
-		uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // ÄÚ´æÖĞ×ªÎª´ó¶Ë
+		msg_end[msg_mod_len] = (uint8_t)0x80;  // å¡«å…… 1 byte
+		uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // å†…å­˜ä¸­è½¬ä¸ºå¤§ç«¯
 		memcpy_s(msg_end + 2 * GROUP_LEN - 8, 0x08, &msg_len_padding, 0x08);
 
 		msg_ptr = (block*)msg_end;
@@ -110,14 +105,14 @@ void SM3::final() {
 		return;
 	}
 
-	// Ö»ĞèÒª1¸öGROUP
+	// åªéœ€è¦1ä¸ªGROUP
 	char* msg_end = new char[GROUP_LEN];
 	memset(msg_end, 0x00, GROUP_LEN);
 	memcpy_s(msg_end, msg_mod_len, msg_ptr, msg_mod_len);
 
-	msg_end[msg_mod_len] = (uint8_t)0x80;  // Ìî³ä 1 byte
-	uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // ÄÚ´æÖĞ×ªÎª´ó¶Ë
-	memcpy_s(msg_end + GROUP_LEN - 8, 0x08, &msg_len_padding, 0x08);  // Ìî³ä³¤¶È
+	msg_end[msg_mod_len] = (uint8_t)0x80;  // å¡«å…… 1 byte
+	uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // å†…å­˜ä¸­è½¬ä¸ºå¤§ç«¯
+	memcpy_s(msg_end + GROUP_LEN - 8, 0x08, &msg_len_padding, 0x08);  // å¡«å……é•¿åº¦
 
 	msg_ptr = (block*)msg_end;
 	update();
@@ -126,22 +121,22 @@ void SM3::final() {
 
 
 void SM3::getHash() {
-	// ÆÕÍ¨block£¬¼´ÒÑ´¦ÀíµÄ×Ö½ÚÊıĞ¡ÓÚ´ı´¦ÀíµÄ×Ö½ÚÊı
+	// æ™®é€šblockï¼Œå³å·²å¤„ç†çš„å­—èŠ‚æ•°å°äºå¾…å¤„ç†çš„å­—èŠ‚æ•°
 	while ((char*)msg_ptr - msg < msg_len - msg_mod_len) {
 		update();
-		msg_ptr = msg_ptr + GROUP_LEN / BLOCK_LEN;  // Ö¸ÏòÏÂÒ»block
+		msg_ptr = msg_ptr + GROUP_LEN / BLOCK_LEN;  // æŒ‡å‘ä¸‹ä¸€block
 	}
 	final();
 	
 	uint8_t* output = (uint8_t*)input_pre;
 	for (int i = 0; i < HASH_LEN; i++)
-		printf("%02X ", (int)output[i]);  // ½øĞĞÌî³ä
+		printf("%02X ", (int)output[i]);  // è¿›è¡Œå¡«å……
 }
 
 
-// ------------------------ ÖĞ¼ä¼ÆËãº¯Êı -------------------------
+// ------------------------ ä¸­é—´è®¡ç®—å‡½æ•° -------------------------
 block SM3::T(size_t j) {
-	/* ·µ»Ø block 32bit Êı¾İ */
+	/* è¿”å› block 32bit æ•°æ® */
 	if (j < 16) return 0x79cc4519;
 	else return 0x7a879d8a;
 }

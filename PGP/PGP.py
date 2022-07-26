@@ -4,7 +4,7 @@ TODO : PGP project with sm2 and sm4.
 
 from gmssl import sm2
 from gmssl.sm4 import CryptSM4, SM4_ENCRYPT, SM4_DECRYPT
-from utility import generateKey_128, ECC_DEMO
+from pgp_utility import generateKey_128, ECC_DEMO
 
 from typing import *
 from pickle import dumps, loads

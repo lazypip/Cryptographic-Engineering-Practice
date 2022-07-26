@@ -1,22 +1,22 @@
 #ifndef SM3
 #define SM3_CPP
 
-// ¾ùÒÔ×Ö½ÚÎªµ¥Î»
+// å‡ä»¥å­—èŠ‚ä¸ºå•ä½
 #define GROUP_LEN 64
 #define HASH_LEN 32
 
-// ×îĞ¡¼ÆËãµ¥Ôª uint32_t 4×Ö½Ú
+// æœ€å°è®¡ç®—å•å…ƒ uint32_t 4å­—èŠ‚
 #define BLOCK_LEN 4
 typedef uint32_t block;
 
 class SM3 {
 private:
 	char* msg;
-	block* msg_ptr;  // Ö¸ÏòÏÂÒ»GROUP
+	block* msg_ptr;  // æŒ‡å‘ä¸‹ä¸€GROUP
 	block* input_pre;   // INPUT_LEN 32 byte
 
-	uint64_t msg_len;  // msg ×Ö½Ú³¤¶È
-	size_t msg_mod_len;  // ĞèÒªÌî³äµÄ²¿·Ö³¤¶È
+	uint64_t msg_len;  // msg å­—èŠ‚é•¿åº¦
+	size_t msg_mod_len;  // éœ€è¦å¡«å……çš„éƒ¨åˆ†é•¿åº¦
 
 public:
 	SM3(char* msg, size_t msg_len);
@@ -27,12 +27,12 @@ public:
 	void final();
 	void getHash();
 
-	// ÖĞ¼ä¼ÆËãº¯Êı
+	// ä¸­é—´è®¡ç®—å‡½æ•°
 	block T(size_t j);
-	block FF(block x, block y, block z, size_t j);  // ¿É´«Ö¸Õë¸Ä½ø
+	block FF(block x, block y, block z, size_t j);  // å¯ä¼ æŒ‡é’ˆæ”¹è¿›
 	block GG(block x, block y, block z, size_t j);
 
-	block lshift(block& x, size_t len);  // Ñ­»·×óÒÆ
+	block lshift(block& x, size_t len);  // å¾ªç¯å·¦ç§»
 	block P0(block& x);
 	block P1(block& x);
 };
@@ -44,7 +44,7 @@ public:
 
 	for (int i = 0; i < GROUP_LEN; i++) {
 		uint8_t test = msg_end[i];
-		printf("%02X ", test);  // ½øĞĞÌî³ä
+		printf("%02X ", test);  // è¿›è¡Œå¡«å……
 	}
 	cout << endl;
 	exit(0);

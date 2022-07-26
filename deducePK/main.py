@@ -1,6 +1,6 @@
 from gmssl import func, sm2
 from gmssl.sm2 import default_ecc_table
-from utility import modular_sqrt, neg_point, ecc_add
+from ecc_utility import modular_sqrt, neg_point, ecc_add
 
 
 def getPK(R: int, S: int, data: bytes, sm2_obj: sm2) -> None:

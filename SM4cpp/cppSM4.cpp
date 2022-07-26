@@ -58,34 +58,34 @@ cppSM4::~cppSM4() {
 
 
 void cppSM4::init() {
-	// X0, X1, X2, X3 ³õÊ¼»¯
+	// X0, X1, X2, X3 åˆå§‹åŒ–
 	res = new block[4];
 	for (int i = 0; i < SM4_BLOCK_LEN; i++) {
 		res[i] = textIn_ptr[i];
-		res[i] = _byteswap_ulong(res[i]);  // ×ª»¯Îª´ó¶Ë´æ´¢
+		res[i] = _byteswap_ulong(res[i]);  // è½¬åŒ–ä¸ºå¤§ç«¯å­˜å‚¨
 	}
 
-	// Éú³É32¸ö4 byteÂÖÃÜÔ¿
+	// ç”Ÿæˆ32ä¸ª4 byteè½®å¯†é’¥
 	rk = new block[SM4_RK_NUM];
 	generateKey();
 }
 
 
 void cppSM4::encrypt() {
-	// [32´Îµü´ú±ä»¯]
+	// [32æ¬¡è¿­ä»£å˜åŒ–]
 	block new_block = 0x00;
 	for (int round = 0; round < SM4_ROUND; round++) {
-		new_block = F(rk[round]);  // Éú³ÉÏÂÒ» Xi
-		// ¸üĞÂres
+		new_block = F(rk[round]);  // ç”Ÿæˆä¸‹ä¸€ Xi
+		// æ›´æ–°res
 		res[0] = res[1], res[1] = res[2];
 		res[2] = res[3], res[3] = new_block;
 	}
 
-	// ×ª»ØĞ¡¶Ë
+	// è½¬å›å°ç«¯
 	for (int i = 0; i < 4; i++)
 		res[i] = _byteswap_ulong(res[i]);
 
-	// [·´Ğò±ä»»]
+	// [ååºå˜æ¢]
 	swap(res[0], res[3]), swap(res[1], res[2]);
 
 	if (textOut_ptr == nullptr) {
@@ -98,7 +98,7 @@ void cppSM4::encrypt() {
 }
 
 void cppSM4::decrypt() {
-	// ·´ĞòÂÖÃÜÔ¿
+	// ååºè½®å¯†é’¥
 	int i = 0, j = SM4_RK_NUM - 1;
 	while (i <= j) {
 		swap(rk[i], rk[j]);
@@ -108,14 +108,14 @@ void cppSM4::decrypt() {
 }
 
 void cppSM4::generateKey() {
-	// Éú³É K0 K1 K2 K3
+	// ç”Ÿæˆ K0 K1 K2 K3
 	block* rk_queue = new block[4];
 	memcpy_s(rk_queue, 16, key, 16);
 	for (int i = 0; i < 4; i++) {
-		rk_queue[i] = _byteswap_ulong(rk_queue[i]);  // ¸ÄÎª´ó¶Ë´æ´¢
+		rk_queue[i] = _byteswap_ulong(rk_queue[i]);  // æ”¹ä¸ºå¤§ç«¯å­˜å‚¨
 		rk_queue[i] ^= FK[i];
 	}
-	// Éú³ÉÂÖÃÜÔ¿
+	// ç”Ÿæˆè½®å¯†é’¥
 	for (int i = 0; i < SM4_ROUND; i++) {
 		block T_input = rk_queue[1] ^ rk_queue[2] ^ rk_queue[3] ^ CK[i];
 		block new_rk = rk_queue[0] ^ T(T_input, true);
@@ -128,26 +128,26 @@ void cppSM4::generateKey() {
 }
 
 
-// ÒÔ blockÎªµ¥Î»
+// ä»¥ blockä¸ºå•ä½
 block cppSM4::F(block& cur_rk) {
 	block input_T = res[1] ^ res[2] ^ res[3] ^ cur_rk;
 	block res_T = T(input_T, false);
 	return res[0] ^ res_T;
 }
 
-// ÊäÈëÒÔblockÎªµ¥Î»
+// è¾“å…¥ä»¥blockä¸ºå•ä½
 block cppSM4::T(block& input, bool mode = false) {
-	byte* data = (byte*)&input;  // ÒÔbyteÎªµ¥Î»´¦Àí
+	byte* data = (byte*)&input;  // ä»¥byteä¸ºå•ä½å¤„ç†
 	byte res_1[4] = { 0x00 };
 
-	// ·ÇÏßĞÔ±ä»»
+	// éçº¿æ€§å˜æ¢
 	for (int i = 0; i < SM4_BLOCK_LEN; i++) {
 		res_1[i] = sbox(data[i]);
 	}
-	// ÏßĞÔ±ä»»
+	// çº¿æ€§å˜æ¢
 	block* res_2 = (block*)res_1;
 
-	if (mode) {  // ÃÜÔ¿Éú³É
+	if (mode) {  // å¯†é’¥ç”Ÿæˆ
 		block res = *res_2 ^ lshift(*res_2, 13) ^ lshift(*res_2, 23);
 		return res;
 	}
@@ -158,8 +158,8 @@ block cppSM4::T(block& input, bool mode = false) {
 }
 
 byte cppSM4::sbox(byte& input) {
-	byte row = input >> 4;  // Ç°4 bit¾ö¶¨ĞĞ
-	byte col = input % 0x10;  // ºó4 bit¾ö¶¨ÁĞ
+	byte row = input >> 4;  // å‰4 bitå†³å®šè¡Œ
+	byte col = input % 0x10;  // å4 bitå†³å®šåˆ—
 	return sBox_data[row][col];
 }
 
@@ -195,7 +195,7 @@ void demo_plt(block* plt_demo) {
 		fprintf(stderr, "invalid pointer\n");
 		exit(1);
 	}
-	// ½âÊÍÎª×Ö·û
+	// è§£é‡Šä¸ºå­—ç¬¦
 	plt_demo[0] = 0x67452301;
 	plt_demo[1] = 0xEFCDAB89;
 	plt_demo[2] = 0x98BADCFE;

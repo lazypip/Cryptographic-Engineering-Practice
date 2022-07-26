@@ -15,7 +15,7 @@ def legendre_symbol(a, p):
     return -1 if ls == p - 1 else ls
 
 def modular_sqrt(a, p):
-    """TODO :"""
+    """TODO : 计算二次剩余"""
     if legendre_symbol(a, p) != 1:
         return 0
     elif a == 0:
@@ -107,9 +107,9 @@ def ecc_add(P1: str, P2: str) -> str:
 
     res = [0, 0]
     mod = int(default_ecc_table['p'], 16)
-    slope = (P2[1] - P1[1]) * ex_gcd(P2[0] - P1[0], mod) % mod
+    tt = (P2[1] - P1[1]) * ex_gcd(P2[0] - P1[0], mod) % mod
 
-    res[0] = (pow(slope, 2) - P1[0] - P2[0]) % mod
-    res[1] = (slope * (P1[0] - res[0]) - P1[1]) % mod
+    res[0] = (pow(tt, 2) - P1[0] - P2[0]) % mod
+    res[1] = (tt * (P1[0] - res[0]) - P1[1]) % mod
 
     return hex(res[0])[2:].rjust(64, '0') + hex(res[1])[2:].rjust(64, '0')
