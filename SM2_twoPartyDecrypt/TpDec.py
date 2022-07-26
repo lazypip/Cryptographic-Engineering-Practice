@@ -1,8 +1,11 @@
 from gmssl.sm2 import default_ecc_table, CryptSM2
 from gmssl.sm3 import sm3_hash
 from gmssl.func import random_hex, bytes_to_list
-
 from ecc_utility import neg_point, ecc_add
+
+import socket
+from pickle import dumps, loads
+
 from typing import *
 hex_t = str  # 16进制字符串
 
@@ -84,6 +87,54 @@ class TpDec:
         
         print("Wrong msg")
         return '00'
+
+    
+    def decryptInteract(d1: int, C: List[hex_t], alice_addr: tuple, Bob_addr) -> hex_t:
+        """TODO : 恢复消息
+        ret : msg(hex_t)
+        """
+        C1, C2, C3 = C[0], C[1], C[2]
+        sm2 = CryptSM2('00', '00')
+
+        d1_inverse = TpDec._inverse(d1, 1)
+        T1 = sm2._kg(d1_inverse, C1)  # T1 = d1^{-1} * C1
+
+        """Interaction"""
+        TpDec._send(T1, Bob_addr)
+        T2 = TpDec._recv(alice_addr)
+
+        # T2 - C1
+        C1_neg = neg_point(C1)
+        kP: hex_t = ecc_add(T2, C1_neg)
+        x2, y2 = kP[:64], kP[64:]  # 作为简化的KDF函数
+        t: hex_t = kP[3:67]
+
+        msg = TpDec._xorHex_t(C2, t)
+        # check
+        data = x2 + msg + y2
+        data: bytes = bytes.fromhex(data)
+        u: hex_t = sm3_hash(bytes_to_list(data))
+        if u == C3:
+            return msg
+        
+        print("Wrong msg")
+        return '00'
+
+
+    def _send(msg: hex_t, dst_addr: tuple) -> None:
+        """TODO: 发送T1 / T2"""
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        msg = dumps(msg)
+        client_socket.sendto(msg, dst_addr)
+
+
+    def _recv(addr: tuple):
+        """TODO: 接收T1 / T2"""
+        server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        server_socket.bind(addr)
+        receive_data, client = server_socket.recvfrom(1024)
+
+        return loads(receive_data)
 
 
     def generateT2(d2: int, T1: hex_t) -> hex_t:

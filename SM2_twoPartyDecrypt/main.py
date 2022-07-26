@@ -4,8 +4,6 @@ from TpDec import TpDec
 def main():
     d1, d2 = TpDec.generateDK()
     pk = TpDec.generatePK(d1, d2)
-    
-    print(d1, d2, pk)
 
     msg = 'Hello World'
     msg = bytes.hex(msg.encode(encoding='utf-8'))
