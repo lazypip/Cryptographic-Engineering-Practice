@@ -147,7 +147,8 @@ class SM3:
         result: List[int] = self.preInput  # 8 * 32 = 256 bit
         result = "".join([hex(ele)[2:].rjust(8, '0') for ele in result])
 
-        print("SM3 Result : ", "0x" + result)      
+        # print("SM3 Result : ", "0x" + result)
+        return "0x" + result
 
 
 if __name__ == "__main__":
