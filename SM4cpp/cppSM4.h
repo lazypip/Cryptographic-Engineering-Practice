@@ -2,6 +2,8 @@
 #ifndef CPPSM4
 #define CPPSM4
 
+#include <immintrin.h>  // avx-256 bit
+
 #define SM4_GROUP_LEN 16
 #define SM4_BLOCK_LEN 4
 #define SM4_BLOCK_NUM 8
@@ -15,34 +17,42 @@ typedef uint32_t block;
 typedef uint8_t byte;
 
 // utility function
-void block_hex(block* msg);  // è¾“å‡º1 blockè¡¨ç¤ºçš„å€¼
-void block_str(block* msg);  // è¾“å‡º1 blockåœ¨å†…å­˜ä¸­çš„è¡¨ç¤º
-void demo_plt(block* plt_demo);  // æ˜æ–‡ç¤ºä¾‹
+void Qblock_str(block* msg);     // Êä³ö4 block±íÊ¾µÄÖµ
+void block_str(block* msg);      // Êä³ö1 blockÔÚÄÚ´æÖĞµÄ±íÊ¾
+
+void block_hex(block* msg);      // Êä³ö1 block±íÊ¾µÄÖµ
+void demo_plt(block* plt_demo);  // Ã÷ÎÄÊ¾Àı
+
 
 class cppSM4 {
 private:
-	block* textIn_ptr;  // è¾“å…¥
-	block* textOut_ptr;  // è¾“å‡ºæŒ‡é’ˆ memcpy
+	block* textIn_ptr;   // ÊäÈë
+	block* key;          // ³õÊ¼ÃÜÔ¿  4 block
 
-	block* key;  // åˆå§‹å¯†é’¥ 4 block
-	block* rk;  // è½®å¯†é’¥    32 block
-	block* res;  // å­˜å‚¨ä¸­é—´è®¡ç®—å€¼
+	block* rk;   // ÂÖÃÜÔ¿    32 block
+	block* res;  // ´æ´¢ÖĞ¼ä¼ÆËãÖµ
+
+	block** T_ptr;    // T table
 
 public:
-	cppSM4(byte* text, byte* textOut, byte* key);
+	cppSM4(byte* text, byte* key);
 	~cppSM4();
 
 	void init();
-	void encrypt();
-	void decrypt();
-
-	// è®¡ç®—å‡½æ•°
-	void generateKey();  // ç”Ÿæˆè½®å¯†é’¥
-	block F(block& cur_rk);  // è®ºå‡½æ•°
-	block T(block& input, bool mode);  // åˆæˆç½®æ¢
+	void encrypt(byte* textOut_ptr);
+	void decrypt(byte* textOut_ptr);
+	
+	// ¼ÆËãº¯Êı
+	void generateKey();                    // Éú³ÉÂÖÃÜÔ¿
+	block F(block& cur_rk);                // ÂÖº¯Êı
+	block T(block& input, bool mode);      // ºÏ³ÉÖÃ»»
 	byte sbox(byte& input);
-	block lshift(block& input, int size);  // å¾ªç¯å·¦ç§»
-};
+	block lshift(block& input, int size);  // blockÑ­»·×óÒÆ
 
+	// ÓÅ»¯³¢ÊÔ
+	void Ttable_build();               // Éú³ÉT´ó±í, 8(1 byte)½ø32(1 block)³ö
+	block Ttable(byte in, int box_num);   // ²é±í
+	block T_opt(block& input);         // ºÏ³ÉÖÃ»»
+};
 
 #endif // !CPPSM4
