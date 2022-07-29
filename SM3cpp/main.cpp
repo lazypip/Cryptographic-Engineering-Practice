@@ -4,9 +4,10 @@
 using namespace std;
 
 int main() {
-	char msg[4] = "abc";
-	size_t msg_len = sizeof(msg) - 1;
-	SM3 hash = SM3(msg, msg_len);
+	char msg[] = "abc";
+
+	SM3 hash = SM3(msg, sizeof(msg) - 1);
+	hash.init();
 	hash.getHash();
 
 	return 0;

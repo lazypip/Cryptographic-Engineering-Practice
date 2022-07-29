@@ -29,7 +29,7 @@ SM3::~SM3() {
 }
 
 void SM3::init() {
-	// IVèµ‹å€¼
+	// IV¸³Öµ
 	input_pre = new block[HASH_LEN / BLOCK_LEN];
 	memcpy_s(input_pre, HASH_LEN, IV, HASH_LEN);
 }
@@ -40,6 +40,7 @@ void SM3::update() {
 	block W[68] = { 0x00 };
 	memcpy_s(W, GROUP_LEN, msg_ptr, GROUP_LEN);
 
+	// Òì»òÔËËãÊ±×ªÎªÕûĞÎ
 	for (int i = 0; i <= 15; i++) {
 		W[i] = _byteswap_ulong(W[i]);
 	}
@@ -48,9 +49,6 @@ void SM3::update() {
 		W[j] = W[j - 6] ^ lshift(W[j - 13], 7);
 		block tmp = W[j - 16] ^ W[j - 9] ^ lshift(W[j - 3], 15);
 		W[j] = W[j] ^ P1(tmp);
-
-		cout << hex << (W[j]) << endl;
-		exit(1);
 	}
 
 	/* WW - 64 */
@@ -58,7 +56,15 @@ void SM3::update() {
 	for (int j = 0; j < 64; j++)
 		WW[j] = W[j] ^ W[j + 4];
 
-	/* å‹ç¼©å‡½æ•° */
+	///* ×ª»Ø×Ö½Ú´® */
+	//for (int i = 0; i < 68; i++) {
+	//	W[i] = _byteswap_ulong(W[i]);
+	//}
+	//for (int i = 0; i < 64; i++) {
+	//	WW[i] = _byteswap_ulong(WW[i]);
+	//}
+
+	/* Ñ¹Ëõº¯Êı */
 	block A = input_pre[0], B = input_pre[1], C = input_pre[2], D = input_pre[3];
 	block E = input_pre[4], F = input_pre[5], G = input_pre[6], H = input_pre[7];
 	block SS1, SS2, TT1, TT2;
@@ -66,6 +72,7 @@ void SM3::update() {
 		block tmp = T(j);
 		SS1 = lshift(A, 12) + E + lshift(tmp, j);
 		SS1 = lshift(SS1, 7);
+
 		SS2 = SS1 ^ lshift(A, 12);
 
 		TT1 = FF(A, B, C, j) + D + SS2 + WW[j];
@@ -82,19 +89,23 @@ void SM3::update() {
 	}
 	input_pre[0] ^= A, input_pre[1] ^= B, input_pre[2] ^= C, input_pre[3] ^= D;
 	input_pre[4] ^= E, input_pre[5] ^= F, input_pre[6] ^= G, input_pre[7] ^= H;
+
+	for (int i = 0; i < 8; i++) {
+		input_pre[i] = _byteswap_ulong(input_pre[i]);
+	}
 }
 
 
 void SM3::final() {
-	/* è¿›è¡Œå¡«å…… */
-	// éœ€è¦2ä¸ªGROUP
+	/* ½øĞĞÌî³ä */
+	// ĞèÒª2¸öGROUP
 	if (msg_mod_len + 1 + 8 > GROUP_LEN) {
 		char* msg_end = new char[2 * GROUP_LEN];
 		memset(msg_end, 0x00, 2 * GROUP_LEN);
 		memcpy_s(msg_end, msg_mod_len, msg_ptr, msg_mod_len);
 
-		msg_end[msg_mod_len] = (uint8_t)0x80;  // å¡«å…… 1 byte
-		uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // å†…å­˜ä¸­è½¬ä¸ºå¤§ç«¯
+		msg_end[msg_mod_len] = (uint8_t)0x80;  // Ìî³ä 1 byte
+		uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // ÄÚ´æÖĞ×ªÎª´ó¶Ë
 		memcpy_s(msg_end + 2 * GROUP_LEN - 8, 0x08, &msg_len_padding, 0x08);
 
 		msg_ptr = (block*)msg_end;
@@ -105,14 +116,14 @@ void SM3::final() {
 		return;
 	}
 
-	// åªéœ€è¦1ä¸ªGROUP
+	// Ö»ĞèÒª1¸öGROUP
 	char* msg_end = new char[GROUP_LEN];
 	memset(msg_end, 0x00, GROUP_LEN);
 	memcpy_s(msg_end, msg_mod_len, msg_ptr, msg_mod_len);
 
-	msg_end[msg_mod_len] = (uint8_t)0x80;  // å¡«å…… 1 byte
-	uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // å†…å­˜ä¸­è½¬ä¸ºå¤§ç«¯
-	memcpy_s(msg_end + GROUP_LEN - 8, 0x08, &msg_len_padding, 0x08);  // å¡«å……é•¿åº¦
+	msg_end[msg_mod_len] = (uint8_t)0x80;  // Ìî³ä 1 byte
+	uint64_t msg_len_padding = _byteswap_uint64(msg_len * 8);  // ÄÚ´æÖĞ×ªÎª´ó¶Ë
+	memcpy_s(msg_end + GROUP_LEN - 8, 0x08, &msg_len_padding, 0x08);  // Ìî³ä³¤¶È
 
 	msg_ptr = (block*)msg_end;
 	update();
@@ -121,22 +132,22 @@ void SM3::final() {
 
 
 void SM3::getHash() {
-	// æ™®é€šblockï¼Œå³å·²å¤„ç†çš„å­—èŠ‚æ•°å°äºå¾…å¤„ç†çš„å­—èŠ‚æ•°
+	// ÆÕÍ¨block£¬¼´ÒÑ´¦ÀíµÄ×Ö½ÚÊıĞ¡ÓÚ´ı´¦ÀíµÄ×Ö½ÚÊı
 	while ((char*)msg_ptr - msg < msg_len - msg_mod_len) {
 		update();
-		msg_ptr = msg_ptr + GROUP_LEN / BLOCK_LEN;  // æŒ‡å‘ä¸‹ä¸€block
+		msg_ptr = msg_ptr + GROUP_LEN / BLOCK_LEN;  // Ö¸ÏòÏÂÒ»block
 	}
 	final();
-	
 	uint8_t* output = (uint8_t*)input_pre;
 	for (int i = 0; i < HASH_LEN; i++)
-		printf("%02X ", (int)output[i]);  // è¿›è¡Œå¡«å……
+		printf("%02X ", (int)output[i]);  // ½øĞĞÌî³ä
+	printf("\n");
 }
 
 
-// ------------------------ ä¸­é—´è®¡ç®—å‡½æ•° -------------------------
+// ------------------------ ÖĞ¼ä¼ÆËãº¯Êı -------------------------
 block SM3::T(size_t j) {
-	/* è¿”å› block 32bit æ•°æ® */
+	/* ·µ»Ø block 32bit Êı¾İ */
 	if (j < 16) return 0x79cc4519;
 	else return 0x7a879d8a;
 }
@@ -155,7 +166,7 @@ block SM3::GG(block x, block y, block z, size_t j) {
 
 block SM3::lshift(block& x, size_t len) {
 	block l = x << len, r = x >> (32 - len);
-	return l ^ r;
+	return l | r;
 }
 
 block SM3::P0(block& x) {

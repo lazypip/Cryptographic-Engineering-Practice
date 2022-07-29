@@ -165,7 +165,7 @@ byte cppSM4::sbox(byte& input) {
 
 block cppSM4::lshift(block& input, int size) {
 	block l = input << size, r = input >> (32 - size);
-	return l ^ r;
+	return l | r;
 }
 
 
