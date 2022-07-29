@@ -11,11 +11,11 @@ int main() {
 	block dec_buffer[4] = { 0x00 };
 	block Qenc_buffer[32] = { 0x00 };
 	
-	// 加密--------------------------------------
+	// 鍔犲瘑--------------------------------------
 	cppSM4 enc = cppSM4((byte*)plaintxt, (byte*)key);
 	enc.init();
 	block tt = 0xAA567521;
-	// 设置优化方式
+	// 璁剧疆浼樺寲鏂瑰紡
 	enc.Ttable_build();
 	//block r1 = enc.T_opt(tt);
 	//cout << hex << r1 << endl;
@@ -29,7 +29,7 @@ int main() {
 	printf("ciphertxt: ");
 	Qblock_str(enc_buffer);
 
-	// 解密--------------------------------------
+	// 瑙ｅ瘑--------------------------------------
 	cppSM4 dec = cppSM4((byte*)enc_buffer, (byte*)key);
 	dec.init();
 	dec.Ttable_build();

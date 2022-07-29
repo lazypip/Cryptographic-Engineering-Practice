@@ -17,20 +17,20 @@ typedef uint32_t block;
 typedef uint8_t byte;
 
 // utility function
-void Qblock_str(block* msg);     // Êä³ö4 block±íÊ¾µÄÖµ
-void block_str(block* msg);      // Êä³ö1 blockÔÚÄÚ´æÖĞµÄ±íÊ¾
+void Qblock_str(block* msg);     // è¾“å‡º4 blockè¡¨ç¤ºçš„å€¼
+void block_str(block* msg);      // è¾“å‡º1 blockåœ¨å†…å­˜ä¸­çš„è¡¨ç¤º
 
-void block_hex(block* msg);      // Êä³ö1 block±íÊ¾µÄÖµ
-void demo_plt(block* plt_demo);  // Ã÷ÎÄÊ¾Àı
+void block_hex(block* msg);      // è¾“å‡º1 blockè¡¨ç¤ºçš„å€¼
+void demo_plt(block* plt_demo);  // æ˜æ–‡ç¤ºä¾‹
 
 
 class cppSM4 {
 private:
-	block* textIn_ptr;   // ÊäÈë
-	block* key;          // ³õÊ¼ÃÜÔ¿  4 block
+	block* textIn_ptr;   // è¾“å…¥
+	block* key;          // åˆå§‹å¯†é’¥  4 block
 
-	block* rk;   // ÂÖÃÜÔ¿    32 block
-	block* res;  // ´æ´¢ÖĞ¼ä¼ÆËãÖµ
+	block* rk;   // è½®å¯†é’¥    32 block
+	block* res;  // å­˜å‚¨ä¸­é—´è®¡ç®—å€¼
 
 	block** T_ptr;    // T table
 
@@ -42,17 +42,17 @@ public:
 	void encrypt(byte* textOut_ptr);
 	void decrypt(byte* textOut_ptr);
 	
-	// ¼ÆËãº¯Êı
-	void generateKey();                    // Éú³ÉÂÖÃÜÔ¿
-	block F(block& cur_rk);                // ÂÖº¯Êı
-	block T(block& input, bool mode);      // ºÏ³ÉÖÃ»»
+	// è®¡ç®—å‡½æ•°
+	void generateKey();                    // ç”Ÿæˆè½®å¯†é’¥
+	block F(block& cur_rk);                // è½®å‡½æ•°
+	block T(block& input, bool mode);      // åˆæˆç½®æ¢
 	byte sbox(byte& input);
-	block lshift(block& input, int size);  // blockÑ­»·×óÒÆ
+	block lshift(block& input, int size);  // blockå¾ªç¯å·¦ç§»
 
-	// ÓÅ»¯³¢ÊÔ
-	void Ttable_build();               // Éú³ÉT´ó±í, 8(1 byte)½ø32(1 block)³ö
-	block Ttable(byte in, int box_num);   // ²é±í
-	block T_opt(block& input);         // ºÏ³ÉÖÃ»»
+	// ä¼˜åŒ–å°è¯•
+	void Ttable_build();               // ç”ŸæˆTå¤§è¡¨, 8(1 byte)è¿›32(1 block)å‡º
+	block Ttable(byte in, int box_num);   // æŸ¥è¡¨
+	block T_opt(block& input);         // åˆæˆç½®æ¢
 };
 
 #endif // !CPPSM4

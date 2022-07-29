@@ -12,7 +12,7 @@ int main() {
 	block Qenc_buffer[32] = { 0x00 };
 	
 
-	// Î´ÓÅ»¯
+	// æœªä¼˜åŒ–
 	cppSM4 enc = cppSM4((byte*)plaintxt, (byte*)key);
 	enc.init();
 
@@ -20,10 +20,10 @@ int main() {
 	for (int i = 0; i < 10000000; i++) {
 		enc.encrypt((byte*)enc_buffer);
 	}
-	cout << clock() - s_time << " Circles" << endl;  // Ê±ÖÓµ¥Ôª
+	cout << clock() - s_time << " Circles" << endl;  // æ—¶é’Ÿå•å…ƒ
 
 
-	// ½öÑ­»·Õ¹¿ª
+	// ä»…å¾ªçŽ¯å±•å¼€
 	cppSM4 enc_opt1 = cppSM4((byte*)plaintxt, (byte*)key);
 	enc_opt1.init();
 	enc_opt1.unrollLoop();
@@ -32,19 +32,19 @@ int main() {
 	for (int i = 0; i < 10000000; i++) {
 		enc_opt1.encrypt((byte*)enc_buffer);
 	}
-	cout << clock() - s_time_opt1 << " Circles" << endl;  // Ê±ÖÓµ¥Ôª
+	cout << clock() - s_time_opt1 << " Circles" << endl;  // æ—¶é’Ÿå•å…ƒ
 
 
-	// ½öT table ÓÅ»¯
+	// ä»…T table ä¼˜åŒ–
 	cppSM4 enc_opt2 = cppSM4((byte*)plaintxt, (byte*)key);
 	enc_opt2.init();
-	enc_opt2.Ttable_build();  // Ô¤¼ÆËã T-table
+	enc_opt2.Ttable_build();  // é¢„è®¡ç®— T-table
 
 	clock_t s_time_opt2 = clock();
 	for (int i = 0; i < 10000000; i++) {
 		enc_opt2.encrypt((byte*)enc_buffer);
 	}
-	cout << clock() - s_time_opt2 << " Circles" << endl;  // Ê±ÖÓµ¥Ôª
+	cout << clock() - s_time_opt2 << " Circles" << endl;  // æ—¶é’Ÿå•å…ƒ
 
 
 	// SIMD + T table
@@ -60,23 +60,23 @@ int main() {
 	
 	cppSM4 enc_opt3 = cppSM4((byte*)Qplaintxt, (byte*)key);
 	enc_opt3.Qinit_SIMD();
-	enc_opt3.Ttable_build();  // Ô¤¼ÆËã T-table
+	enc_opt3.Ttable_build();  // é¢„è®¡ç®— T-table
 
 	clock_t s_time_opt3 = clock();
 	for (int i = 0; i < int(10000000 / 8); i++) {
 		enc_opt3.Qencrypt_SIMD((byte*)Qenc_buffer);
 	}
-	cout << clock() - s_time_opt3 << " Circles" << endl;  // Ê±ÖÓµ¥Ôª
+	cout << clock() - s_time_opt3 << " Circles" << endl;  // æ—¶é’Ÿå•å…ƒ
 
 
 	return 0;
 }
 
 /*
-	// ¼ÓÃÜ--------------------------------------
+	// åŠ å¯†--------------------------------------
 	cppSM4 enc = cppSM4((byte*)plaintxt, (byte*)key);
 	enc.init();
-	// ÉèÖÃÓÅ»¯·½Ê½
+	// è®¾ç½®ä¼˜åŒ–æ–¹å¼
 	enc.Ttable_build();
 
 	clock_t s_time = clock();
@@ -85,7 +85,7 @@ int main() {
 	printf("ciphertxt: ");
 	Qblock_str(enc_buffer);
 
-	// ½âÃÜ--------------------------------------
+	// è§£å¯†--------------------------------------
 	cppSM4 dec = cppSM4((byte*)enc_buffer, (byte*)key);
 	dec.init();
 	dec.decrypt((byte*)dec_buffer);
