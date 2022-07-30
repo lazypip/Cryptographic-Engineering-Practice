@@ -1,11 +1,14 @@
+"""
+TODO: Implementation of SM3.
+"""
 from typing import *
 from utility import *
-from sys import exit
 from math import ceil
+from time import time
+from sys import exit
 
 
 class SM3_Utility:
-    # msg for test
     msg_test = "abcd" * 64
     msg256_test = 'A' * 256
     msg512_test = 'B' * 512
@@ -46,23 +49,26 @@ class SM3:
         self.msg_signal = False     # normal Block 结束标识
 
         
-    def __init__(self, msg: str) -> None:
+    def __init__(self, msg: str, IV = None) -> None:
         self.msg = msg
         self.msg_len = len(msg) * 8  # bit长度
         self.group_mod = self.msg_len % 512
         self.group_size = ceil((self.msg_len) / 512) - 1  # final block index
 
         self._tmpValue()
+        if IV:  # 使用自定义IV
+            self.preInput = IV
 
 
-    def _getNextBlock(self) -> List:
+    def getNextBlock(self) -> List:
         """ TODO : 获取下一BLOCK 并将其转换为列表的形式
-        curBloc <- [0xffffffff, 0xffffffff, ...] 共 512 / 32 = 16 个元素 """
+        curBloc <- [0xffffffff, 0xffffffff, ...] 共 512 / 32 = 16 个元素
+        """
         self.msg_ptr += 1
         # final block
         if self.msg_ptr == self.group_size:
             self.msg_signal = True
-            return self._getFinalBlock()
+            return self.getFinalBlock()
 
         """next normal block"""
         startOffset = self.msg_ptr * (512 // 8)
@@ -70,7 +76,7 @@ class SM3:
         return str_to_intList(nextBlock)  # 将 string 转换为 16 * 32 bit int列表
 
 
-    def _getFinalBlock(self) -> List:
+    def getFinalBlock(self) -> List:
         len_padding = bin(self.msg_len)[2:].rjust(64, '0')
 
         startoff = self.msg_ptr * (512 // 8)
@@ -81,15 +87,14 @@ class SM3:
         if len(finalBlock_bin) + 64 > 512:
             zero_padding = '0' * (512 * 2 - len(finalBlock_bin) - 64)
             finalBlock = bin_to_intList(finalBlock_bin + zero_padding + len_padding)
-            res = [finalBlock[:16], finalBlock[16:]]
-            return res
+            return [finalBlock[:16], finalBlock[16:]]
         else:
             zero_padding = '0' * (512 - len(finalBlock_bin) - 64)
             finalBlock = bin_to_intList(finalBlock_bin + zero_padding + len_padding)
             return finalBlock
 
 
-    def _update(self, curBlock: List[int]):
+    def update(self, curBlock: List[int]):
         """TODO: 消息扩展、压缩函数"""
         pre = self.preInput[::]        #  8 * 32 = 256 bit
         curBlock_512 = curBlock        # 16 * 32 = 512 bit
@@ -124,32 +129,33 @@ class SM3:
         self.preInput = list(map(lambda x, y: x ^ y, self.preInput, pre))  #  8 * 32 = 256 bit
 
 
-    def _final(self, finalBlock):
+    def final(self, finalBlock):
         """TODO: 填充并处理最后一个模块"""
         if len(finalBlock) == 2:
-            self._update(finalBlock[0])
-            self._update(finalBlock[1])
+            self.update(finalBlock[0])
+            self.update(finalBlock[1])
         else:
-            self._update(finalBlock)
-        self.msg_signal = True
+            self.update(finalBlock)
 
 
-    def getResult(self):
+    def getResult(self, hexdig=True) -> str:
         """TODO : """
         while True:
-            nextBlock = self._getNextBlock()
+            nextBlock = self.getNextBlock()
             if self.msg_signal:
-                self._final(nextBlock)
+                self.final(nextBlock)
                 break
-            self._update(nextBlock)
+            self.update(nextBlock)
             
-        
         result: List[int] = self.preInput  # 8 * 32 = 256 bit
-        result = "".join([hex(ele)[2:].rjust(8, '0') for ele in result])
-
-        print("SM3 Result : ", "0x" + result)      
+        if not hexdig:  # 输出int表示
+            return result
+        
+        result = "0x" + "".join([hex(ele)[2:].rjust(8, '0') for ele in result])
+        return result
 
 
 if __name__ == "__main__":
-    hash = SM3(SM3_Utility.msg_test)
-    hash.getResult()
+    hash = SM3("abc")
+    res = hash.getResult()
+    print(res)

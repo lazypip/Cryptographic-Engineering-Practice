@@ -20,4 +20,6 @@ if __name__ == "__main__":
     prehash = prehash.getResult(hexdig=False)
 
     extend_msg = "efgh"
+    print("hash(abcd):", prehash)
+    print("hash(abcd | padding | efgh): ")
     SM3_extend(extend_msg, prehash)

@@ -17,7 +17,7 @@ def str_to_bin(string) -> str:
     str_len = len(string)
     string: bytes = string.encode(encoding='utf-8')  # 字节串
     string: int = int.from_bytes(string, byteorder="big", signed=False)  # 整形
-    return bin(string)[2:].rjust(str_len * 8, '0')  # 二进制串
+    return bin(string)[2:].rjust(str_len * 8, '0')  # 填充后的二进制串
 
 
 def bin_to_intList(binary) -> List:
@@ -27,6 +27,7 @@ def bin_to_intList(binary) -> List:
 
 
 def lshift(x, size, mod = 0x100000000):
+    """ TODO: [循环]左移"""
     size = size % 32
     left = (x << size) % mod
     right = x >> (32 - size) % mod
