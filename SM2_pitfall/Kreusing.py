@@ -22,7 +22,7 @@ if __name__ == "__main__":
     pk_a = 'B9C9A6E04E9C91F7BA880429273747D7EF5DDEB0BB2FF6317EB00BEF331A83081A6'\
            '994B8993F3F5D6EADDDB81872266C87C018FB4162F5AF347B483E24620207'
     
-    rk_b = '7ae40b13c8417980feb726e6d955f5b853abe21413061ceea66388121d9a0353'
+    rk_b = '7ae40b13c8417980feb726e6d955f5b853abe21413061ceea66388121d9a0353'.lower()
     pk_b = '83309e429d20e82ec19f3d3f1f9b11abf33d6327daf3589bb667d3e6c666df258699'\
            '32bfa27a951cf30ca959bd4bfc8e13dbbf9bd92de73707b0e97aee369cdb'
 
@@ -38,4 +38,5 @@ if __name__ == "__main__":
     d_b = Kreusing(k, sign_b)
     d_a = Kreusing(k, sign_a)
 
-    print(d_b, d_a)
+    print("private key of a and b:", rk_a, rk_b, end='\n')
+    print("Recover private key of a and b:", d_a, d_b, end='\n')

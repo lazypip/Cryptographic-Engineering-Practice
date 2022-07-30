@@ -9,6 +9,7 @@ if __name__ == "__main__":
     P: hex_t = TpSign.aliceR1(d1)  # 公钥64 bytes
     k1 = TpSign.aliceR2(msg)
     sign: hex_t = TpSign.aliceR3(d1, k1)
+    print("Msg: ", msg)
     print("Get Signature:", sign)
 
     # Verify the sig

@@ -38,7 +38,7 @@ def getPK(R: int, S: int, data: bytes, sm2_obj: sm2) -> None:
     r_4[1] = ecc_add(r_2[1], r_3)
     pk[1] = sm2_obj._kg(r_1, r_4[1])  # 64 byte
 
-    print("The protential pk:", pk[0], '\n or ', pk[1])
+    print("The protential pk:\n", pk[0], '\n', pk[1])
 
 
 if __name__ == "__main__":
@@ -51,7 +51,9 @@ if __name__ == "__main__":
     data = b"111"
     sm2_crypt = sm2.CryptSM2(public_key=public_key, private_key=private_key)
     R_S = sm2_crypt.sign(data, func.random_hex(sm2_crypt.para_len))
+    print("public key:\n", public_key.lower())
 
     # 恢复公钥
     R, S = int(R_S[:64], 16), int(R_S[64:], 16)
+    print("Sign\n", R, S)
     getPK(R, S, data, sm2_crypt)

@@ -67,6 +67,7 @@ if __name__ == "__main__":
     print("Original msg:", msg)
     Alice = PGP_send(pk_Bob)
     cipher = Alice.encrypt(msg.encode(encoding='utf-8'))
+    print("cipher:\n", cipher)
 
     """ [Bob接收] """
     rk_Bob = ECC_DEMO.private_key

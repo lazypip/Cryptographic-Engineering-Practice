@@ -37,6 +37,7 @@ def check(a: int, socket: socket.socket):
 
     for ele in S:
         if ele[2] == h_b:
+            print("Found data in Set", ele)
             print("Passwd leaking found")
             return
 
