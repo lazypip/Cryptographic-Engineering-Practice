@@ -16,7 +16,7 @@ Contents:
 说明：
 
 - 所有项目**均本人独自完成**，未组队
-- 每个项目有**单独README**进行说明
+- 每个项目**目录中有单独README**进行说明
 
 ## List of Completed Projects
 
@@ -24,10 +24,11 @@ Contents:
 
 - [Deduce public key from signature](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_deducePK).
 - [Verify the sm2 pitfalls with poc code](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_pitfall).
-- [Implement a PGP scheme with sm2](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_pgp).
+- [Impl sm2 with RFC6979](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_rfc6979).
+- [Implement a PGP scheme with sm2](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_PGP).
 - [Implement sm2 2P sign with real network communication](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_twoPartySign).
-- [Implement sm2 2P decrypt with real network communication](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_twoPartySign).
-- [Implement of Google password check scheme](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_twoPartySign).
+- [Implement sm2 2P decrypt with real network communication](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/SM2_twoPartyDecrypt).
+- [Implement of Google password check scheme.](https://github.com/lazypip/Cryptographic-Engineering-Practice/tree/main/Sim_googlePasswdCheck)
 
 ### -SM3
 

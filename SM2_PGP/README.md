@@ -1,5 +1,7 @@
 # PGP scheme with sm2
 
+说明：本项目因repo目录名混淆，于7.30重新打包上传，先前提交目录名为SM2_pgp，可在记录中查到。
+
 ## Description
 
 ​	PGP加密方案，使用对称密钥加密数据，使用对方公钥加密对称密钥。将$enc_k(data),enc_{pk}(k)$发送至接收方。
