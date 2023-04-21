@@ -9,9 +9,9 @@ Contents:
 
 ## About Author
 
-完成人：武彦博， GitHub：[lazypip](https://github.com/lazypip)
+完成人：， GitHub：[lazypip](https://github.com/lazypip)
 
-班级：网安19级2班， 学号：201900460033
+班级：， 学号：
 
 说明：
 
